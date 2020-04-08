@@ -7,7 +7,7 @@ debug.log
 info.log
 test-reports/
 
-venv/
+env/
 __pycache__
 .vscode/
 
