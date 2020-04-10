@@ -10,4 +10,4 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = JBProduct
-        fields = ('product_name', 'time', 'count')
+        fields = ('id', 'product_name', 'time', 'count')

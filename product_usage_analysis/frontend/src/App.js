@@ -11,10 +11,11 @@ class AppUnwrapped extends React.Component {
   
   componentDidMount() {
     this.props.get_products_info();
-    console.log(this.state);
   }
 
   render() {
+    const { products_info = {} } = this.props; 
+    console.log(products_info)
     return (
       <div className="App">
         <header className="App-header">
