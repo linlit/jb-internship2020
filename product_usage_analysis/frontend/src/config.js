@@ -1,0 +1,1 @@
+export const apiURL = window.location.protocol + '//' + window.location.host;

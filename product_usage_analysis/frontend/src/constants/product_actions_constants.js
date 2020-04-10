@@ -1,0 +1,4 @@
+export const productActionConstants = {
+    PRODUCTS_SUCCESS: 'PRODUCTS_USAGE_INFO_SUCCESS',
+    PRODUCTS_FAILURE: 'PRODUCTS_USAGE_INFO_FAILURE',
+}
