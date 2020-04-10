@@ -4,7 +4,7 @@ const initialState = {
     products_info: {}
 }
 
-export function products_info(state = initialState, action) {
+export function productsReducer(state = initialState, action) {
     switch (action.type) {
         case productActionConstants.PRODUCTS_SUCCESS: {
             let products = { ...state.products_info };
