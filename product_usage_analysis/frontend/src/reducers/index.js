@@ -1,1 +1,3 @@
-export { productsReducer } from './product_reducer';
+import { productsReducer } from './product_reducer';
+
+export default productsReducer;
