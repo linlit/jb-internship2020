@@ -1,24 +1,24 @@
 import React from 'react';
-import { Layout, Menu, Typography, DatePicker, Row, Select } from 'antd'
+import { Layout, Typography, DatePicker, Row, Select, Col } from 'antd'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Label } from 'recharts'
 import * as productActions from './actions'
 import * as _ from 'lodash'
 import './App.scss';
 
 import { connect } from 'react-redux';
-const { RangePicker } = DatePicker;
-const { SubMenu } = Menu;
 
 const { Header, Content, Footer, Sider } = Layout;
-const { Title, Text } = Typography
-
+const { Title } = Typography
 const { Option } = Select
-
 
 class AppUnwrapped extends React.Component {
   state = {
     collapsed: false,
     data_range: null,
-    start_date: null
+    start_date: null,
+    chart_data_ws: null,
+    chart_data_idea: null,
+    chart_data_php: null
   }
 
   onCollapse = collapsed => {
@@ -38,10 +38,21 @@ class AppUnwrapped extends React.Component {
     this.setState({ data_range : data_range });
   };
 
+  makeDataArray(pr_name, pr_info, start, end) {
+    const filtered = _.pickBy(pr_info, function(record) {
+      const milli_time = new Date(record.time).setHours(0, 0, 0, 0)
+      return (record.product_name === pr_name) && (milli_time >= start) && (milli_time <= end);
+    })
+
+    let data_array = []
+    for (const record in filtered) {
+      data_array.push(filtered[record])
+    }
+    return data_array
+  }
+
   parseUsageData() {
     const { products_info = {} } = this.props 
-  
-    let data_to_show = {}
     const start_date = this.state.start_date
     let end_time = this.state.start_date
 
@@ -60,10 +71,11 @@ class AppUnwrapped extends React.Component {
         break;
     }
 
-    const filtered = _.pickBy(products_info, function(record) {
-      const milli_time = new Date(record.time).setHours(0, 0, 0, 0)
-      return (milli_time >= start_date) && (milli_time <= end_time);
-    })
+    const filtered_ws = this.makeDataArray("WebStorm", products_info, start_date, end_time)
+    const filtered_idea = this.makeDataArray("IntelliJ IDEA", products_info, start_date, end_time)
+    const filtered_php = this.makeDataArray("PhpStorm", products_info, start_date, end_time)   
+
+    return [filtered_ws, filtered_idea, filtered_php]
   }
 
   componentDidMount() {
@@ -77,7 +89,11 @@ class AppUnwrapped extends React.Component {
     }
 
     if (this.state.start_date !== prevState.start_date) {
-      this.parseUsageData() 
+      const sets = this.parseUsageData()
+      const ws = sets[0]
+      const idea = sets[1]
+      const php = sets[2]
+      this.setState({ chart_data_ws : ws, chart_data_idea : idea, chart_data_php : php })
     }
   }
 
@@ -96,6 +112,24 @@ class AppUnwrapped extends React.Component {
       return true
     };
     
+    const tickFormatter = (dat) => {
+      return new Date(dat).toLocaleString().split(',')[0]
+    }
+
+    const find_min = (data) => {
+      console.log(data)
+      const values  = Object.values(data);
+      const l = Math.min.apply(null, values.map(function(x) { return x['count']} ));
+      return l
+    }
+
+    const find_max = (data) => {
+      const keys  = Object.values(data);
+      const h = Math.max.apply(null, keys.map(function(x) { return x['count']} ));
+      return h
+    }
+
+
     return (
       <Layout style={{ minHeight: '100vh' }}>
         
@@ -119,6 +153,12 @@ class AppUnwrapped extends React.Component {
               picker={this.state.data_range} disabledDate={disabledDate} onChange={this.handleDateChange} 
                 onPanelChange={this.handlePanelChange}/>}
           </Row>
+
+
+          {this.state.data_range && this.state.start_date &&
+            <Row>
+
+            </Row>}
         </Sider>
 
         <Layout className="site-layout">
@@ -127,8 +167,92 @@ class AppUnwrapped extends React.Component {
           </Header>
           
           <Content style={{ margin: '16px 16px' }}>
-            <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
-              Some graphs
+            <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>              
+              {this.state.data_range && this.state.start_date &&
+                <Col>
+                  <Row>
+                    <Title justify='middle' level={3}>
+                      There are some records! 
+                    </Title>
+                  </Row>
+
+                  {this.state.chart_data_idea && 
+                    <Row align='center' justify='middle' type='flex' style={{width: '100%'}}>
+                      <Row>
+                        <Title align='center' level={3} style={{width: '100%'}}> IntelliJ IDEA </Title>   
+                        
+                        <Title align='center' level={4} style={{width: '100%', margin: "5px 0"}}> 
+                          Min: {find_min(this.state.chart_data_idea)} &emsp;
+                          Max: {find_max(this.state.chart_data_idea)}
+                        </Title> 
+                      </Row>  
+
+                      <Row>
+                        <BarChart height={400} width={800} data={this.state.chart_data_idea}
+                          margin={{ top: 5, right: 30, left: 20, bottom: 15 }} barSize={20} >
+                          <XAxis dataKey="time" tickFormatter={tickFormatter} scale="point" padding={{ left: 10, right: 10 }} />
+                          <YAxis /> 
+                          <Tooltip />
+                          <Legend />
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <Bar dataKey="count" fill='#00474f' />
+                      </BarChart>
+                      </Row>
+                  </Row>}
+
+                  {this.state.chart_data_ws && 
+                    <Row align='center' justify='middle' type='flex'>
+                      <Row>
+                        <Title level={3} align='center' style={{width: '100%'}}> WebStorm </Title>
+                        
+                        <Title level={4}  align='center'style={{width: '100%', margin: "5px 0"}}> 
+                          Min: {find_min(this.state.chart_data_ws)} &emsp;
+                          Max: {find_max(this.state.chart_data_ws)}
+                        </Title>   
+                      </Row>
+
+                      <Row>
+                        <BarChart height={400} width={800} data={this.state.chart_data_ws}
+                          margin={{ top: 5, right: 30, left: 20, bottom: 15 }} barSize={20} >
+                          <XAxis dataKey="time" tickFormatter={tickFormatter} scale="point" padding={{ left: 10, right: 10 }} />
+                          <YAxis /> 
+                          <Tooltip />
+                          <Legend />
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <Bar dataKey="count" fill="#00474f" />
+                        </BarChart>
+                      </Row>
+                  </Row>}
+
+                  {this.state.chart_data_php && 
+                    <Row align='center' justify='middle' type='flex'>
+                      <Row>
+                        <Title level={3} align='center' style={{width: '100%'}}> PhpStorm </Title>
+                      
+                        <Title level={4} align='center' style={{width: '100%', margin: "5px 0"}}> 
+                          Min: {find_min(this.state.chart_data_php)} &emsp;
+                          Max: {find_max(this.state.chart_data_php)}
+                        </Title>
+                      </Row>   
+
+                      <Row>
+                        <BarChart height={400} width={800} data={this.state.chart_data_php}
+                          margin={{ top: 5, right: 30, left: 20, bottom: 15 }} barSize={20} >
+                          <XAxis dataKey="time" tickFormatter={tickFormatter} scale="point" padding={{ left: 10, right: 10 }} />
+                          <YAxis /> 
+                          <Tooltip />
+                          <Legend />
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <Bar dataKey="count" fill="#00474f"/>
+                        </BarChart>
+                      </Row>
+                  </Row>}
+                </Col>
+              }
+              
+              {!(this.state.data_range && this.state.start_date) &&
+                <Title justify='middle' level={3}> You should choose parameters first! </Title>}
+        
             </div>
           </Content>
           <Footer style={{ textAlign: 'center' }}>JetBrains © 2020</Footer>
