@@ -170,82 +170,73 @@ class AppUnwrapped extends React.Component {
             <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>              
               {this.state.data_range && this.state.start_date &&
                 <Col>
-                  <Row>
-                    <Title justify='middle' level={3}>
-                      There are some records! 
-                    </Title>
-                  </Row>
-
                   {this.state.chart_data_idea && 
                     <Row align='center' justify='middle' type='flex' style={{width: '100%'}}>
-                      <Row>
-                        <Title align='center' level={3} style={{width: '100%'}}> IntelliJ IDEA </Title>   
+                      <Col style={{width: '100%'}}>
+                        <Title align='center' level={3} > IntelliJ IDEA </Title>   
                         
-                        <Title align='center' level={4} style={{width: '100%', margin: "5px 0"}}> 
+                        <Title align='center' level={4} style={{ margin: "5px 0"}}> 
                           Min: {find_min(this.state.chart_data_idea)} &emsp;
                           Max: {find_max(this.state.chart_data_idea)}
                         </Title> 
-                      </Row>  
+                      </Col>  
 
-                      <Row>
-                        <BarChart height={400} width={800} data={this.state.chart_data_idea}
+                      <Col>
+                        <BarChart height={500} width={1200} data={this.state.chart_data_idea}
                           margin={{ top: 5, right: 30, left: 20, bottom: 15 }} barSize={20} >
                           <XAxis dataKey="time" tickFormatter={tickFormatter} scale="point" padding={{ left: 10, right: 10 }} />
                           <YAxis /> 
                           <Tooltip />
-                          <Legend />
                           <CartesianGrid strokeDasharray="3 3" />
                           <Bar dataKey="count" fill='#00474f' />
                       </BarChart>
-                      </Row>
+                      </Col>
                   </Row>}
 
                   {this.state.chart_data_ws && 
                     <Row align='center' justify='middle' type='flex'>
-                      <Row>
-                        <Title level={3} align='center' style={{width: '100%'}}> WebStorm </Title>
+                      <Col style={{width: '100%'}}>
+                        <Title level={3} align='center'> WebStorm </Title>
                         
-                        <Title level={4}  align='center'style={{width: '100%', margin: "5px 0"}}> 
+                        <Title level={4}  align='center' style={{ margin: "5px 0"}}> 
                           Min: {find_min(this.state.chart_data_ws)} &emsp;
                           Max: {find_max(this.state.chart_data_ws)}
                         </Title>   
-                      </Row>
+                      </Col>
 
-                      <Row>
-                        <BarChart height={400} width={800} data={this.state.chart_data_ws}
+                      <Col>
+                        <BarChart height={500} width={1200} data={this.state.chart_data_ws}
                           margin={{ top: 5, right: 30, left: 20, bottom: 15 }} barSize={20} >
                           <XAxis dataKey="time" tickFormatter={tickFormatter} scale="point" padding={{ left: 10, right: 10 }} />
                           <YAxis /> 
                           <Tooltip />
-                          <Legend />
                           <CartesianGrid strokeDasharray="3 3" />
                           <Bar dataKey="count" fill="#00474f" />
                         </BarChart>
-                      </Row>
+                      </Col>
                   </Row>}
 
                   {this.state.chart_data_php && 
                     <Row align='center' justify='middle' type='flex'>
-                      <Row>
-                        <Title level={3} align='center' style={{width: '100%'}}> PhpStorm </Title>
+                      <Col style={{width: '100%'}}>
+                        <Title level={3} align='center'> PhpStorm </Title>
                       
-                        <Title level={4} align='center' style={{width: '100%', margin: "5px 0"}}> 
+                        <Title level={4} align='center' style={{margin: "5px 0"}}> 
                           Min: {find_min(this.state.chart_data_php)} &emsp;
                           Max: {find_max(this.state.chart_data_php)}
                         </Title>
-                      </Row>   
+                      </Col>   
 
-                      <Row>
-                        <BarChart height={400} width={800} data={this.state.chart_data_php}
+                      <Col>
+                        <BarChart height={500} width={1200} data={this.state.chart_data_php}
                           margin={{ top: 5, right: 30, left: 20, bottom: 15 }} barSize={20} >
                           <XAxis dataKey="time" tickFormatter={tickFormatter} scale="point" padding={{ left: 10, right: 10 }} />
                           <YAxis /> 
                           <Tooltip />
-                          <Legend />
                           <CartesianGrid strokeDasharray="3 3" />
                           <Bar dataKey="count" fill="#00474f"/>
                         </BarChart>
-                      </Row>
+                      </Col>
                   </Row>}
                 </Col>
               }
