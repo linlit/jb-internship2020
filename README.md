@@ -5,6 +5,8 @@
 
 Диапазоны данных: квартал, месяц, неделя, день.
 
+![alt text](https://github.com/linlit/jb-internship2020/blob/master/Screenshot%20from%202020-04-13%2012-33-57.png)
+
 ### Установка и запуск сервера
 
 * Установите Python, pip с помощью вашего пакетного менеджера
